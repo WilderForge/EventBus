@@ -4,7 +4,7 @@ secure_modules_version = "2.2.21"
 unsafe_version = "0.9.2"
 
 typetools_version = "0.6.3"
-nulls_version = "23.0.0"
+nulls_version = "26.0.2"
 jopt_simple_version = "5.0.4"
 log4j_api_version = "2.17.1"
 junit_version = "5.11.4"
