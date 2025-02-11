@@ -39,7 +39,7 @@ extraJavaModuleInfo {
 }
 
 changelog {
-    from '1.0.0'
+    //from '1.0.0'
 }
 
 jar {
