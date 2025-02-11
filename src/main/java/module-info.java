@@ -1,5 +1,6 @@
 /*
  * Copyright (c) Forge Development LLC
+ * Copyright (c) Gamebuster
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 open module net.minecraftforge.eventbus {
