@@ -1,0 +1,34 @@
+[versions]
+modlauncher_version = "10.1.1"
+secure_modules_version = "2.2.21"
+unsafe_version = "0.9.2"
+
+typetools_version = "0.6.3"
+nulls_version = "23.0.0"
+jopt_simple_version = "5.0.4"
+log4j_api_version = "2.17.1"
+junit_version = "5.10.1"
+junit_platform_version = "1.10.1"
+asm_version = "9.7.1"
+jmh_version = "1.37"
+
+[libraries]
+modlauncher = { module = "net.minecraftforge:modlauncher", version.ref = "modlauncher_version" }
+securemodules = { module = "net.minecraftforge:securemodules", version.ref = "secure_modules_version" }
+unsafe = { module = "net.minecraftforge:unsafe", version.ref = "unsafe_version" }
+typetools = { module = "net.jodah:typetools", version.ref = "typetools_version" }
+nulls = { module = "org.jetbrains:annotations", version.ref = "nulls_version" }
+jopt-simple = { module = "net.sf.jopt-simple:jopt-simple", version.ref = "jopt_simple_version" }
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j_api_version" }
+junit-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit_version" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit_version" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit_platform_version" }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm_version" }
+asm-tree = { module = "org.ow2.asm:asm-tree", version.ref = "asm_version" }
+asm-commons = { module = "org.ow2.asm:asm-commons", version.ref = "asm_version" }
+jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh_version" }
+jmh-annotationProcessor = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh_version" }
+
+[bundles]
+junit-runtime = ["junit-engine", "junit-platform-launcher"]
+asm = ["asm", "asm-tree", "asm-commons"]
