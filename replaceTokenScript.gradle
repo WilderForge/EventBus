@@ -39,7 +39,7 @@ def tokenReplaceExtensions = ['.java', '.json']
 
 // Define all tokens and their replacements as a map
 def replacementTokens = [
-    modVersion: project.eventBusVersion, //defines the token @modVersion@, which is replaced with the `modVersion` value located in gradle.properties (project root)
+    eventBusVersion: project.eventBusVersion, //defines the token @modVersion@, which is replaced with the `modVersion` value located in gradle.properties (project root)
     buildDate: new Date().format('yyyy-MM-dd HH:mm:ss'), //defines the token @buildDate@, which is replaced by the current system time.
     builtBy: System.getProperty("user.name")
 ]

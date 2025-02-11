@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id":"eventbus",
+	"version":"@eventBusVersion@",
+	
+	"name":"EventBus",
+	"description": "WilderForge's fork of MinecraftForge's EventBus framework. \n\n EventBus is designed to be a simple subscriber-publisher framework. Originally inspired by Guava, with intentions to be faster by replacing reflection with generated accessor classes. EventBus is intended to be a generic library usable in any project.",
+	"authors": [
+		"Forge Development LLC.",
+		"Gamebuster19901"
+	],
+	
+	"contact": {
+		"sources": "https://wildermods.com/eventbus",
+		"issues": "https://wildermods.com/eventbus/issues",
+		"homepage": "https://wildermods.com/eventbus"
+	},
+	
+	"mixins": [
+
+	],
+	"depends":{
+		
+	},
+	"breaks":{
+
+	},
+	"custom": {
+		"credits":[
+			"[title]Original Programming[]",
+			"cpw [discord]@cpw.",
+			"LexManos [discord]@lexmanos",
+			"",
+			"[title]Fork Maintainer[]",
+			"Gamebuster [discord]@gamebuster",
+			"",
+			"[title]Upstream Maintainer[]",
+			"LexManos [discord]@lexmanos",
+			"",
+			"[title]Special Thanks[]",
+			"YourKit"
+		]
+	}
+}
