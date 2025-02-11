@@ -9,10 +9,6 @@ plugins {
 
 group = 'net.minecraftforge'
 version = eventBusVersion
-print("Version: $version")
-
-println "Group: $group"
-println "Version: $version"
 
 apply from: 'replaceTokenScript.gradle'
 apply from: 'publishScript.gradle'
@@ -35,32 +31,6 @@ dependencies {
     compileOnly(libs.modlauncher)
     compileOnly(libs.securemodules)
     compileOnly(libs.nulls)
-}
-
-gradle.taskGraph.whenReady {
-    tasks.each { task ->
-        if (task.name.contains("sourcesJar")) {
-            println "Task '${task.name}' created by: ${task.class.name}"
-        }
-    }
-}
-
-tasks.withType(AbstractPublishToMaven).configureEach { task ->
-    task.doFirst {
-        println "Publishing Task: ${task.name} -> ${task.publication?.name ?: 'Unknown'}"
-        task.publication?.artifacts?.each { artifact ->
-            println "  - Artifact: ${artifact.file} (Type: ${artifact.extension}, Classifier: ${artifact.classifier})"
-        }
-    }
-}
-
-tasks.withType(PublishToMavenRepository).configureEach { task ->
-    task.doFirst {
-        println "Publishing to repository: ${task.repository.url}"
-        task.publication.artifacts.each { artifact ->
-            println "Artifact: ${artifact.file} (Type: ${artifact.extension}, Classifier: ${artifact.classifier})"
-        }
-    }
 }
 
 jar {
