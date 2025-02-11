@@ -1,28 +1,31 @@
-import net.minecraftforge.gradleutils.PomUtils
-
 plugins {
     id 'eclipse'
     id 'java-library'
     id 'maven-publish'
     id 'com.github.ben-manes.versions' version '0.50.0'
     id 'org.gradlex.extra-java-module-info' version '1.8'
-    id 'net.minecraftforge.gradleutils' version '2.3.3'
     id 'net.minecraftforge.licenser' version '1.0.1'
 }
 
 group = 'net.minecraftforge'
-version = gradleutils.tagOffsetVersion
+version = eventBusVersion
 print("Version: $version")
+
+println "Group: $group"
+println "Version: $version"
+
+apply from: 'replaceTokenScript.gradle'
+apply from: 'publishScript.gradle'
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(16)
     modularity.inferModulePath = true
-    withSourcesJar()
 }
 
 repositories {
     mavenCentral()
-    maven gradleutils.forgeMaven
+    maven { url = 'https://maven.wildermods.com' }
+    maven { url = 'https://maven.minecraftforge.net/' }
 }
 
 dependencies {
@@ -34,23 +37,41 @@ dependencies {
     compileOnly(libs.nulls)
 }
 
-extraJavaModuleInfo {
-    failOnMissingModuleInfo = false
+gradle.taskGraph.whenReady {
+    tasks.each { task ->
+        if (task.name.contains("sourcesJar")) {
+            println "Task '${task.name}' created by: ${task.class.name}"
+        }
+    }
 }
 
-changelog {
-    //from '1.0.0'
+tasks.withType(AbstractPublishToMaven).configureEach { task ->
+    task.doFirst {
+        println "Publishing Task: ${task.name} -> ${task.publication?.name ?: 'Unknown'}"
+        task.publication?.artifacts?.each { artifact ->
+            println "  - Artifact: ${artifact.file} (Type: ${artifact.extension}, Classifier: ${artifact.classifier})"
+        }
+    }
+}
+
+tasks.withType(PublishToMavenRepository).configureEach { task ->
+    task.doFirst {
+        println "Publishing to repository: ${task.repository.url}"
+        task.publication.artifacts.each { artifact ->
+            println "Artifact: ${artifact.file} (Type: ${artifact.extension}, Classifier: ${artifact.classifier})"
+        }
+    }
 }
 
 jar {
     manifest {
         attributes([
             'Specification-Title':   'EventBus',
-            'Specification-Version':  gradleutils.gitInfo.tag,
+            'Specification-Version':  project.version,
             'Specification-Vendor':   'Forge Development LLC',
             'Implementation-Title':   'EventBus',
             'Implementation-Version': project.version,
-            'Implementation-Vendor':  'Forge Development LLC'
+            'Implementation-Vendor':  'WilderForge'
         ] as LinkedHashMap, 'net/minecraftforge/eventbus/service/')
     }
 }
@@ -58,31 +79,6 @@ jar {
 license {
     header = file("LICENSE-header.txt")
     newLine = false
-}
-
-publishing {
-    publications.register('mavenJava', MavenPublication) {
-        from components.java
-        artifactId = 'eventbus'
-        pom {
-            name = 'Event Bus'
-            description = 'High performance Event Bus library'
-            url = 'https://github.com/MinecraftForge/EventBus'
-
-            PomUtils.setGitHubDetails(pom, 'EventBus')
-
-            license PomUtils.Licenses.LGPLv2_1
-
-            developers {
-                developer PomUtils.Developers.LexManos
-                developer PomUtils.Developers.cpw
-            }
-        }
-    }
-
-    repositories {
-        maven gradleutils.publishingForgeMaven
-    }
 }
 
 allprojects {

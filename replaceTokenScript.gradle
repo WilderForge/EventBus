@@ -1,0 +1,145 @@
+/*
+ * This Gradle build script preprocesses source and resource files by replacing placeholders 
+ * (e.g., `@modVersion@`) in your source code with actual values at compile time.
+ * It also organizes the build process to use these modified files.
+ *
+ * Key Features:
+ * 1. **Token Replacement**:
+ *    - Replaces placeholders in `.java` and `.json` files with project-specific values.
+ *
+ * 2. **Custom Tasks**:
+ *    - `replaceTokensInResources`: Processes resource files and outputs them to `build/processedResources`.
+ *    - `replaceTokensInSource`: Processes Java source files and outputs them to `build/processedSrc`.
+ *
+ * 3. **Source Set Updates**:
+ *    - Uses a `processed` source set for token-replaced files, ensuring the build uses the updated files.
+ *
+ * 4. **Build Integration**:
+ *    - Ensures token replacement happens before resource processing, compilation, and packaging.
+ *    - Creates a `sourceJar` containing the processed files.
+ *
+ * How to Use:
+ * 1. Define the token and its value in gradle.properties, which is located in the project's root directory.
+ 	(see the `replacementTokens` variable declaration in this script)
+ * 2. Add the token to the replacementTokens map in this buildscript.
+ * 3. Add placeholders (e.g., `@modVersion@`) in your source or resource files.
+ * 4. Run `./gradlew build` to generate the processed files and build the project.
+ *
+ * Outputs:
+ * - Processed resource files in `build/processedResources`.
+ * - Processed source files in `build/processedSrc`.
+ * - A source JAR containing processed files in `build/libs`.
+ * - A Compiled JAR binary which uses the processed files. Located in `build/libs`
+ */
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+// Define file extensions for token replacement. You can add additional file types to replace tokens in.
+def tokenReplaceExtensions = ['.java', '.json']
+
+// Define all tokens and their replacements as a map
+def replacementTokens = [
+    modVersion: project.eventBusVersion, //defines the token @modVersion@, which is replaced with the `modVersion` value located in gradle.properties (project root)
+    buildDate: new Date().format('yyyy-MM-dd HH:mm:ss'), //defines the token @buildDate@, which is replaced by the current system time.
+    builtBy: System.getProperty("user.name")
+]
+
+task replaceTokensInResources(type: Copy) {
+    doFirst {
+        delete "$buildDir/processedResources"
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        // Only include files matching the defined extensions
+        include { file -> tokenReplaceExtensions.any { file.name.endsWith(it) } }
+        // Apply token replacement using the predefined variable
+        filter(ReplaceTokens, tokens: replacementTokens)
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        // Ensure non-text files are passed through untouched
+        exclude { file -> tokenReplaceExtensions.any { file.name.endsWith(it) } }
+    }
+    into("$buildDir/processedResources")
+    
+    inputs.files(sourceSets.main.resources.srcDirs)
+    outputs.dir("$buildDir/processedResources")
+}
+
+task replaceTokensInSource(type: Copy) {
+    doFirst {
+    	delete "$buildDir/processedSrc"
+        project.logger.lifecycle("Starting file iteration in source files")
+        project.logger.lifecycle("Source directories being used: ${sourceSets.main.java.srcDirs}")
+    }
+
+    from(sourceSets.main.java.srcDirs) {
+        include '**/*'
+
+        eachFile { file ->
+            def matchesExtension = tokenReplaceExtensions.any { file.name.endsWith(it) }
+            project.logger.lifecycle("found file " + file)
+        }
+
+        filter(ReplaceTokens, tokens: replacementTokens)
+    }
+
+    into("$buildDir/processedSrc")
+
+    doLast {
+        project.logger.lifecycle("File iteration and token replacement complete")
+    }
+}
+
+
+sourceSets {
+    processed {
+    	resources.srcDirs = ["$buildDir/processedResources"]
+        java.srcDirs = ["$buildDir/processedSrc"]
+    }
+    build {
+    	java.srcDirs = sourceSets.main.java.srcDirs + sourceSets.processed.java.srcDirs
+        resources.srcDirs = sourceSets.main.resources.srcDirs + sourceSets.processed.resources.srcDirs
+    }
+}
+
+configurations {
+    resolvedCompileOnly {
+        extendsFrom compileOnly
+    }
+}
+
+processResources {
+    dependsOn replaceTokensInResources
+    from(sourceSets.processed.resources)
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+compileJava {
+	dependsOn replaceTokensInResources
+    source = replaceTokensInSource.outputs
+    classpath -= sourceSets.main.resources
+    classpath += sourceSets.processed.resources
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.processed.allSource
+    archiveClassifier.set('sources')
+    destinationDirectory.set(file("$buildDir/libs"))
+    dependsOn replaceTokensInSource, replaceTokensInResources
+}
+build.dependsOn(sourceJar)
+
+tasks.named('checkLicenseBuild') {
+	dependsOn tasks.named('replaceTokensInResources')
+    dependsOn tasks.named('replaceTokensInSource')
+}
+
+tasks.named('checkLicenseProcessed') {
+	dependsOn tasks.named('replaceTokensInResources')
+    dependsOn tasks.named('replaceTokensInSource')
+}
+
+eclipse {
+    classpath {
+    	sourceSets -= [sourceSets.processed, sourceSets.build]
+    }
+}
