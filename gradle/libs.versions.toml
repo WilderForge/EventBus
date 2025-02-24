@@ -8,7 +8,7 @@ nulls_version = "26.0.2"
 jopt_simple_version = "5.0.4"
 log4j_api_version = "2.24.3"
 junit_version = "5.12.0"
-junit_platform_version = "1.11.4"
+junit_platform_version = "1.12.0"
 asm_version = "9.7.1"
 jmh_version = "1.37"
 
