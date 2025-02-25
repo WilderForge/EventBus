@@ -12,7 +12,7 @@ package net.minecraftforge.eventbus.api;
  *
  * @see SubscribeEvent#priority()
  */
-public enum EventPriority implements IEventListener {
+public interface EventPriority {
     /**
      * Priority of event listeners, listeners will be sorted with respect to this priority level.
      *
@@ -20,18 +20,14 @@ public enum EventPriority implements IEventListener {
      *   Due to using a ArrayList in the ListenerList,
      *   these need to stay in a contiguous index starting at 0. {Default ordinal}
      */
-    HIGHEST, //First to execute
-    HIGH,
-    NORMAL,
-    LOW,
-    LOWEST,
+    public static final int LOWER = -10000; //First to execute
+    public static final int LOW = -5000;
+    public static final int NORMAL = 0;
+    public static final int HIGH = 5000;
+    public static final int HIGHER = 10000;
     /**
      * When in this state, {@link Event#setCanceled(boolean)} will throw an exception if called with any value.
      */
-    MONITOR; //Last to execute
+    public static final int MONITOR = Integer.MAX_VALUE; //Last to execute
 
-    @Override
-    public void invoke(Event event) {
-        event.setPhase(this);
-    }
 }

@@ -48,7 +48,7 @@ public class ASMEventHandler implements IEventListener {
         }
     }
 
-    public EventPriority getPriority() {
+    public Integer getPriority() {
         return subInfo.priority();
     }
 

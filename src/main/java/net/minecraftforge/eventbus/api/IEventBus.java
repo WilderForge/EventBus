@@ -49,7 +49,7 @@ public interface IEventBus {
      * @param consumer Callback to invoke when a matching event is received
      * @param <T> The {@link Event} subclass to listen for
      */
-    <T extends Event> void addListener(EventPriority priority, Consumer<T> consumer);
+    <T extends Event> void addListener(Integer priority, Consumer<T> consumer);
 
     /**
      * Add a consumer listener with the specified {@link EventPriority} and potentially cancelled events.
@@ -59,7 +59,7 @@ public interface IEventBus {
      * @param consumer Callback to invoke when a matching event is received
      * @param <T> The {@link Event} subclass to listen for
      */
-    <T extends Event> void addListener(EventPriority priority, boolean receiveCancelled, Consumer<T> consumer);
+    <T extends Event> void addListener(Integer priority, boolean receiveCancelled, Consumer<T> consumer);
 
     /**
      * Add a consumer listener with the specified {@link EventPriority} and potentially cancelled events.
@@ -73,7 +73,7 @@ public interface IEventBus {
      * @param consumer Callback to invoke when a matching event is received
      * @param <T> The {@link Event} subclass to listen for
      */
-    <T extends Event> void addListener(EventPriority priority, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer);
+    <T extends Event> void addListener(Integer priority, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer);
 
     /**
      * Add a consumer listener for a {@link GenericEvent} subclass, filtered to only be called for the specified
@@ -97,7 +97,7 @@ public interface IEventBus {
      * @param <T> The {@link GenericEvent} subclass to listen for
      * @param <F> The {@link Class} to filter the {@link GenericEvent} for
      */
-    <T extends GenericEvent<? extends F>, F> void addGenericListener(Class<F> genericClassFilter, EventPriority priority, Consumer<T> consumer);
+    <T extends GenericEvent<? extends F>, F> void addGenericListener(Class<F> genericClassFilter, Integer priority, Consumer<T> consumer);
 
     /**
      * Add a consumer listener with the specified {@link EventPriority} and potentially cancelled events,
@@ -111,7 +111,7 @@ public interface IEventBus {
      * @param <T> The {@link GenericEvent} subclass to listen for
      * @param <F> The {@link Class} to filter the {@link GenericEvent} for
      */
-    <T extends GenericEvent<? extends F>, F> void addGenericListener(Class<F> genericClassFilter, EventPriority priority, boolean receiveCancelled, Consumer<T> consumer);
+    <T extends GenericEvent<? extends F>, F> void addGenericListener(Class<F> genericClassFilter, Integer priority, boolean receiveCancelled, Consumer<T> consumer);
 
     /**
      * Add a consumer listener with the specified {@link EventPriority} and potentially cancelled events,
@@ -129,7 +129,7 @@ public interface IEventBus {
      * @param <T> The {@link GenericEvent} subclass to listen for
      * @param <F> The {@link Class} to filter the {@link GenericEvent} for
      */
-    <T extends GenericEvent<? extends F>, F> void addGenericListener(Class<F> genericClassFilter, EventPriority priority, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer);
+    <T extends GenericEvent<? extends F>, F> void addGenericListener(Class<F> genericClassFilter, Integer priority, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer);
 
     /**
      * Unregister the supplied listener from this EventBus.

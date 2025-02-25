@@ -5,7 +5,6 @@
  */
 package net.minecraftforge.eventbus;
 
-import net.minecraftforge.eventbus.api.Event;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
@@ -18,6 +17,7 @@ import java.util.Optional;
 
 import static net.minecraftforge.eventbus.LogMarkers.EVENTBUS;
 import static net.minecraftforge.eventbus.Names.*;
+
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.*;
 
@@ -71,18 +71,24 @@ public class EventSubclassTransformer {
         // well, we should at least use the context classloader - this is forcing all the game classes in through
         // the system classloader otherwise...
         Class<?> parent = null;
+        Class eventClass = Thread.currentThread().getContextClassLoader().loadClass(EVENT.substring(1, EVENT.length() - 1).replace('/', '.'));
         ClassLoader loader = getClassLoader();
+        LOGGER.info(EVENTBUS, "Loader: " + loader);
+        
         try {
             parent = loader.loadClass(classNode.superName.replace('/', '.'));
         } catch (ClassNotFoundException e) {
             LOGGER.error(EVENTBUS, "Could not find parent {} for class {} in classloader {} on thread {}", classNode.superName, classNode.name, loader, Thread.currentThread());
             throw e;
         }
-
-        if (!Event.class.isAssignableFrom(parent))
+        LOGGER.info(EVENTBUS, "Assignable from Event.class: " + eventClass.isAssignableFrom(parent) + " - " + classNode.name);
+        LOGGER.info(EVENTBUS, "Event class classloader: " + eventClass.getClassLoader());
+        LOGGER.info(EVENTBUS, "Context class loader:" + Thread.currentThread().getContextClassLoader());
+        
+        if (!eventClass.isAssignableFrom(parent))
             return false;
 
-        LOGGER.debug(EVENTBUS, "Event transform begin: {}", classNode.name);
+        LOGGER.info(EVENTBUS, "Event transform begin: {}", classNode.name);
 
         boolean hasGetListenerList = false;
         boolean hasDefaultCtr      = false;
@@ -133,7 +139,7 @@ public class EventSubclassTransformer {
          * injected to change this value. This is done in case Event itself can't be
          * transformed to use the optimized system.
          */
-        if (parent == Event.class) {
+        if (parent == eventClass) {
             if (!hasResult) {
                 /* Add:
                  *      public boolean hasResult()

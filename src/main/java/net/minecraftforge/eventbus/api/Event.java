@@ -37,7 +37,7 @@ public class Event {
 
     private boolean isCanceled = false;
     private Result result = Result.DEFAULT;
-    private EventPriority phase = null;
+    private Integer phase = null;
 
     public Event() { }
 
@@ -132,18 +132,18 @@ public class Event {
     }
 
     @Nullable
-    public EventPriority getPhase() {
+    public Integer getPhase() {
         return this.phase;
     }
 
-    public void setPhase(@NotNull EventPriority value) {
+    public void setPhase(@NotNull Integer value) {
         Objects.requireNonNull(value, "setPhase argument must not be null");
         if (seenPhase(value)) throw new IllegalArgumentException("Attempted to set event phase to "+ value +" when already "+ phase);
         phase = value;
     }
 
-    private boolean seenPhase(@NotNull EventPriority value) {
-        int prev = phase == null ? -1 : phase.ordinal();
-        return prev >= value.ordinal();
+    private boolean seenPhase(@NotNull Integer value) {
+        int prev = phase == null ? Integer.MIN_VALUE : phase;
+        return prev >= value;
     }
 }
