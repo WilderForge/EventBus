@@ -68,12 +68,11 @@ public class EventSubclassTransformer {
     private boolean buildEvents(ClassNode classNode) throws Exception {
         // Yes, this recursively loads classes until we get this base class. THIS IS NOT A ISSUE. Coremods should handle re-entry just fine.
         // If they do not this a COREMOD issue NOT a Forge/LaunchWrapper issue.
-        // well, we should at least use the context classloader - this is forcing all the game classes in through
-        // the system classloader otherwise...
+
         Class<?> parent = null;
         Class eventClass = Thread.currentThread().getContextClassLoader().loadClass(EVENT.substring(1, EVENT.length() - 1).replace('/', '.'));
         ClassLoader loader = getClassLoader();
-        LOGGER.info(EVENTBUS, "Loader: " + loader);
+//        LOGGER.info(EVENTBUS, "Loader: " + loader);
         
         try {
             parent = loader.loadClass(classNode.superName.replace('/', '.'));
@@ -81,14 +80,14 @@ public class EventSubclassTransformer {
             LOGGER.error(EVENTBUS, "Could not find parent {} for class {} in classloader {} on thread {}", classNode.superName, classNode.name, loader, Thread.currentThread());
             throw e;
         }
-        LOGGER.info(EVENTBUS, "Assignable from Event.class: " + eventClass.isAssignableFrom(parent) + " - " + classNode.name);
-        LOGGER.info(EVENTBUS, "Event class classloader: " + eventClass.getClassLoader());
-        LOGGER.info(EVENTBUS, "Context class loader:" + Thread.currentThread().getContextClassLoader());
+//        LOGGER.info(EVENTBUS, "Assignable from Event.class: " + eventClass.isAssignableFrom(parent) + " - " + classNode.name);
+//        LOGGER.info(EVENTBUS, "Event class classloader: " + eventClass.getClassLoader());
+//        LOGGER.info(EVENTBUS, "Context class loader:" + Thread.currentThread().getContextClassLoader());
         
         if (!eventClass.isAssignableFrom(parent))
             return false;
 
-        LOGGER.info(EVENTBUS, "Event transform begin: {}", classNode.name);
+        LOGGER.debug(EVENTBUS, "Event transform begin: {}", classNode.name);
 
         boolean hasGetListenerList = false;
         boolean hasDefaultCtr      = false;
