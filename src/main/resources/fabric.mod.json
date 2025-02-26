@@ -26,10 +26,10 @@
 
 	],
 	"depends":{
-		
+		"spasm": ">=0.2.*"
 	},
 	"breaks":{
-
+		"spasm": "0.2.3+WilderForge"
 	},
 	"custom": {
 		"credits":[
