@@ -3,7 +3,6 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'com.github.ben-manes.versions' version '0.52.0'
-    id 'org.gradlex.extra-java-module-info' version '1.11'
     id 'net.minecraftforge.licenser' version '1.0.1'
 }
 
@@ -14,8 +13,7 @@ apply from: 'replaceTokenScript.gradle'
 apply from: 'publishScript.gradle'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(16)
-    modularity.inferModulePath = true
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 repositories {
@@ -26,6 +24,8 @@ repositories {
     maven { url = 'https://maven.minecraftforge.net/' }
 }
 
+sourceCompatibility = '17'
+targetCompatibility = '17'
 dependencies {
     api(libs.typetools)
     implementation(libs.log4j.api)

@@ -3,17 +3,19 @@ plugins {
     id 'java-library'
     id 'net.minecraftforge.gradleutils' version '2.3.6'
     id 'net.minecraftforge.licenser'
-    id 'org.gradlex.extra-java-module-info'
     id 'test-report-aggregation'
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven { url = 'https://maven.wildermods.com' }
+    maven { url = 'https://maven.fabricmc.net/' }
     maven gradleutils.forgeMaven
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(16)
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 license {
@@ -31,13 +33,9 @@ dependencies {
     testImplementation(libs.asm.tree)
     testImplementation(libs.jopt.simple)
     testImplementation(libs.log4j.api)
+    testImplementation(libs.spasm)
     testRuntimeOnly(libs.bundles.junit.runtime)
     testCompileOnly(libs.nulls)
-}
-
-extraJavaModuleInfo {
-    failOnMissingModuleInfo = false
-    automaticModule('net.sf.jopt-simple:jopt-simple', 'jopt.simple')
 }
 
 tasks.register('testAll', AggregateTest) {

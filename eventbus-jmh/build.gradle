@@ -1,7 +1,6 @@
 plugins {
     id 'eclipse'
     id 'java-library'
-    id 'org.gradlex.extra-java-module-info'
     id 'net.minecraftforge.gradleutils' version '2.3.6'
     id 'net.minecraftforge.licenser'
 }
@@ -12,7 +11,7 @@ repositories {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(16)
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 license {
@@ -34,12 +33,6 @@ dependencies {
     implementation libs.jmh.core
     runtimeOnly libs.jmh.annotationProcessor
     annotationProcessor libs.jmh.annotationProcessor
-}
-
-extraJavaModuleInfo {
-    failOnMissingModuleInfo = false
-    automaticModule('org.openjdk.jmh:jmh-core', 'jmh.core')
-    automaticModule('net.sf.jopt-simple:jopt-simple', 'jopt.simple')
 }
 
 tasks.register('aggregateJmh', AggregateJmh) {
