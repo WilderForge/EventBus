@@ -10,6 +10,12 @@
 		"Gamebuster19901"
 	],
 	
+	"entrypoints": {
+		"spasm:transformer" : [
+			"net.minecraftforge.eventbus.service.SpASMEntryPointTransformer"
+		]
+	},
+	
 	"contact": {
 		"sources": "https://wildermods.com/eventbus",
 		"issues": "https://wildermods.com/eventbus/issues",
