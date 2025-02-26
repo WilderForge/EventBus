@@ -12,7 +12,7 @@ junit_platform_version = "1.12.0"
 asm_version = "9.7.1"
 jmh_version = "1.37"
 mixin_version = "0.15.5+mixin.0.8.7"
-spasm_version = "0.2.2"
+spasm_version = "0.2.3+WilderForge"
 
 [libraries]
 modlauncher = { module = "net.minecraftforge:modlauncher", version.ref = "modlauncher_version" }
