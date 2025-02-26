@@ -12,7 +12,7 @@
 	
 	"entrypoints": {
 		"spasm:transformer" : [
-			"net.minecraftforge.eventbus.service.SpASMEntryPointTransformer"
+			"net.minecraftforge.eventbus.service.SpASMEntrypointTransformer"
 		]
 	},
 	
