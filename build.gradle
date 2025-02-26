@@ -26,10 +26,12 @@ repositories {
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
+
 dependencies {
     api(libs.typetools)
     implementation(libs.log4j.api)
     implementation(libs.bundles.asm)
+    implementation(libs.spasm)
     compileOnly(libs.modlauncher)
     compileOnly(libs.securemodules)
     compileOnly(libs.nulls)
