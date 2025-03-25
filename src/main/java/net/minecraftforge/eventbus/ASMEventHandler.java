@@ -73,6 +73,11 @@ public class ASMEventHandler implements IEventListener {
 	public Annotation[] getDeclaredAnnotations() {
 		return method.getDeclaredAnnotations();
 	}
+	
+	@Override
+	public Method listeningMethod() {
+		return method;
+	}
 
 	@Override
 	public SubscribeEvent subscribeInfo() {

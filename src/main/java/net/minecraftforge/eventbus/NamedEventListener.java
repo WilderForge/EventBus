@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
 public class NamedEventListener implements IEventListener {
@@ -55,5 +56,10 @@ public class NamedEventListener implements IEventListener {
 	@Override
 	public SubscribeEvent subscribeInfo() {
 		return wrap.subscribeInfo();
+	}
+
+	@Override
+	public Method listeningMethod() {
+		return wrap.listeningMethod();
 	}
 }

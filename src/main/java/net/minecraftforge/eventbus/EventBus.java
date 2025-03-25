@@ -287,6 +287,11 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
 			public SubscribeEvent subscribeInfo() {
 				return method.getDeclaredAnnotation(SubscribeEvent.class);
 			}
+
+			@Override
+			public Method listeningMethod() {
+				return method;
+			}
         	
         }, consumer.getClass()::getName), priority, method);
     }
@@ -339,18 +344,28 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
 
     @Override
     public boolean post(Event event, IEventBusInvokeDispatcher wrapper) {
+        return post(event, wrapper, (e, listeners) -> {
+            return List.copyOf(EventBus.this.listeners.computeIfAbsent(event, l -> Collections.emptyList()));
+        });
+    }
+    
+    public boolean post(Event event, IEventBusFireOrder order) {
+    	return post(event, IEventListener::invoke, (e, listenersList) -> order.reorder(event, listenersList));
+    }
+    
+    public boolean post(Event event, IEventBusInvokeDispatcher wrapper, IEventBusFireOrder order) {
         if (shutdown) return false;
         if (checkTypesOnDispatch && !baseType.isInstance(event))
             throw new IllegalArgumentException("Cannot post event of type " + event.getClass().getSimpleName() + " to this event. Must match type: " + baseType.getSimpleName());
 
-        IEventListener[] listeners = event.getListenerList().getListeners(busID);
+        List<IEventListener> listeners = order.reorder(event, List.of(event.getListenerList().getListeners(busID)));
         int index = 0;
         try {
-            for (; index < listeners.length; index++) {
-                wrapper.invoke(listeners[index], event);
+            for (; index < listeners.size(); index++) {
+                wrapper.invoke(listeners.get(index), event);
             }
         } catch (Throwable throwable) {
-            exceptionHandler.handleException(this, event, listeners, index, throwable);
+            exceptionHandler.handleException(this, event, listeners.toArray(new IEventListener[]{}), index, throwable);
             throw throwable;
         }
         return event.isCanceled();

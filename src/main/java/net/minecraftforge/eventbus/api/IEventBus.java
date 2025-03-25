@@ -161,7 +161,18 @@ public interface IEventBus {
      * @return true if the event was {@link Cancelable} cancelled
      */
     boolean post(Event event, IEventBusInvokeDispatcher wrapper);
-
+    
+    /**
+     * Submit the event for dispatch to listeners. The fire order allows for
+     * specifying a custom order that the events should be posted in.
+     * 
+     * @param event The event to dispatch to listeners
+     * @param order The order the events should be posted in
+     * @return true if the event was {@#link Cancelable} cancelled
+     */
+    boolean post(Event event, IEventBusFireOrder order);
+    
+    boolean post(Event event, IEventBusInvokeDispatcher wrapper, IEventBusFireOrder order);
     /**
      * Submit the event for dispatch to appropriate listeners and return the (possibly mutated) event
      *
@@ -176,6 +187,16 @@ public interface IEventBus {
     default <T extends Event> T fire(T event, IEventBusInvokeDispatcher wrapper) {
         post(event, wrapper);
         return event;
+    }
+    
+    default <T extends Event> T fire(T event, IEventBusFireOrder order) {
+    	post(event, order);
+    	return event;
+    }
+    
+    default <T extends Event> T fire(T event, IEventBusInvokeDispatcher wrapper, IEventBusFireOrder order) {
+    	post(event, wrapper, order);
+    	return event;
     }
 
     /**
