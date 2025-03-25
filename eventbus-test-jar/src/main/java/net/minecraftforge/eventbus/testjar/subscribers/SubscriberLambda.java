@@ -18,9 +18,9 @@ import net.minecraftforge.eventbus.testjar.events.ResultEvent;
 public class SubscriberLambda {
     public static Consumer<IEventBus> register = SubscriberLambda::register;
     public static void register(IEventBus bus) {
-        bus.addListener(SubscriberLambda::onCancelableEvent);
-        bus.addListener(SubscriberLambda::onResultEvent);
-        bus.addListener(SubscriberLambda::onSimpleEvent);
+        bus.addListener(SubscriberLambda::onCancelableEvent, null);
+        bus.addListener(SubscriberLambda::onResultEvent, null);
+        bus.addListener(SubscriberLambda::onSimpleEvent, null);
     }
 
     public static void onCancelableEvent(CancelableEvent event) { }

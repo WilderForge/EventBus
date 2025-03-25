@@ -34,7 +34,7 @@ public class ParentHandlersGetInvokedTest implements ITestHandler {
             } else if (eventClass == SubEvent.class) {
                 subEventHandled.set(true);
             }
-        });
+        }, null);
 
         bus.post(new SuperEvent());
         bus.post(new SubEvent());

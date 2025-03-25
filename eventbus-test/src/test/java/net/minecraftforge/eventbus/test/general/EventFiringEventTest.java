@@ -31,10 +31,10 @@ public class EventFiringEventTest implements ITestHandler {
         bus.addListener(EventPriority.NORMAL, false, Event1.class, (event1) -> {
             bus.post(new AbstractEvent.Event2());
             handled1.set(true);
-        });
+        }, null);
         bus.addListener(EventPriority.NORMAL, false, AbstractEvent.Event2.class, (event2) -> {
             handled2.set(true);
-        });
+        }, null);
 
         bus.post(new Event1());
 

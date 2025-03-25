@@ -47,7 +47,7 @@ public abstract class ParallelEventTest implements ITestHandler {
             }
             busSet.parallelStream().forEach(iEventBus -> { //execute parallel listener adding
                 for (int i = 0; i < LISTENER_COUNT; i++)
-                    iEventBus.addListener(this::handle);
+                    iEventBus.addListener(this::handle, null);
             });
 
             // Make sure it tracked them all
@@ -74,7 +74,7 @@ public abstract class ParallelEventTest implements ITestHandler {
             Set<Runnable> toAdd = new HashSet<>();
 
             for (int i = 0; i < LISTENER_COUNT; i++) { //prepare parallel listener adding
-                toAdd.add(() -> bus.addListener(this::handle));
+                toAdd.add(() -> bus.addListener(this::handle, null));
             }
             toAdd.parallelStream().forEach(Runnable::run); //execute parallel listener adding
 

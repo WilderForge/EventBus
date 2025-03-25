@@ -7,7 +7,9 @@ package net.minecraftforge.eventbus;
 
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
 public class NamedEventListener implements IEventListener {
@@ -34,4 +36,24 @@ public class NamedEventListener implements IEventListener {
     public void invoke(final Event event) {
         this.wrap.invoke(event);
     }
+
+	@Override
+	public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+		return wrap.getAnnotation(annotationClass);
+	}
+
+	@Override
+	public Annotation[] getAnnotations() {
+		return wrap.getAnnotations();
+	}
+
+	@Override
+	public Annotation[] getDeclaredAnnotations() {
+		return wrap.getDeclaredAnnotations();
+	}
+
+	@Override
+	public SubscribeEvent subscribeInfo() {
+		return wrap.subscribeInfo();
+	}
 }

@@ -5,6 +5,8 @@
  */
 package net.minecraftforge.eventbus.api;
 
+import java.util.Comparator;
+
 import net.minecraftforge.eventbus.BusBuilderImpl;
 
 /**
@@ -21,6 +23,7 @@ public interface BusBuilder {
     BusBuilder startShutdown();
     BusBuilder checkTypesOnDispatch();
     BusBuilder markerType(Class<?> type);
+    BusBuilder setComparator(Comparator<IEventListener> comparator);
 
     /* Use ModLauncher hooks when creating ASM handlers. */
     BusBuilder useModLauncher();

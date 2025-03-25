@@ -7,6 +7,7 @@ package net.minecraftforge.eventbus;
 
 import net.minecraftforge.eventbus.api.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import static org.objectweb.asm.Type.getMethodDescriptor;
 
@@ -15,9 +16,11 @@ public class ASMEventHandler implements IEventListener {
     private final SubscribeEvent subInfo;
     private final String readable;
     private final Type filter;
+    private final Method method;
 
     public ASMEventHandler(IEventListenerFactory factory, Object target, Method method, boolean isGeneric) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
         handler = factory.create(method, target);
+        this.method = method;
 
         subInfo = method.getAnnotation(SubscribeEvent.class);
         readable = "ASM: " + target + " " + method.getName() + getMethodDescriptor(method);
@@ -55,4 +58,24 @@ public class ASMEventHandler implements IEventListener {
     public String toString() {
         return readable;
     }
+
+	@Override
+	public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+		return method.getAnnotation(annotationClass);
+	}
+
+	@Override
+	public Annotation[] getAnnotations() {
+		return method.getAnnotations();
+	}
+
+	@Override
+	public Annotation[] getDeclaredAnnotations() {
+		return method.getDeclaredAnnotations();
+	}
+
+	@Override
+	public SubscribeEvent subscribeInfo() {
+		return subInfo;
+	}
 }

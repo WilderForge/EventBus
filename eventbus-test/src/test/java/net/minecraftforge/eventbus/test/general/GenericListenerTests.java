@@ -30,7 +30,7 @@ public abstract class GenericListenerTests implements ITestHandler {
         @Override
         public void test(Consumer<Class<?>> validator, Supplier<BusBuilder> builder) {
             IEventBus bus = builder.get().build();
-            bus.addGenericListener(List.class, this::handleGenericEvent);
+            bus.addGenericListener(List.class, this::handleGenericEvent, null);
             bus.post(new GenericEvent<List<String>>() {
                 public Type getGenericType() {
                     return List.class;
@@ -44,7 +44,7 @@ public abstract class GenericListenerTests implements ITestHandler {
         @Override
         public void test(Consumer<Class<?>> validator, Supplier<BusBuilder> builder) {
             IEventBus bus = builder.get().build();
-            Assertions.assertThrows(IllegalArgumentException.class, () -> bus.addListener(this::handleGenericEvent));
+            Assertions.assertThrows(IllegalArgumentException.class, () -> bus.addListener(this::handleGenericEvent, null));
         }
     }
 

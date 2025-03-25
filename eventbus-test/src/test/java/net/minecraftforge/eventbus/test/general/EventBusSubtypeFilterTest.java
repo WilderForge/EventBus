@@ -39,7 +39,7 @@ public abstract class EventBusSubtypeFilterTest implements ITestHandler {
         @Override
         public void test(Consumer<Class<?>> validator, Supplier<BusBuilder> builder) {
             IEventBus bus = busCheck(builder);
-            assertDoesNotThrow(() -> bus.addListener((BaseEvent e) -> {}));
+            assertDoesNotThrow(() -> bus.addListener((BaseEvent e) -> {}, null));
             assertDoesNotThrow(() -> bus.post(new BaseEvent()));
         }
     }
@@ -48,7 +48,7 @@ public abstract class EventBusSubtypeFilterTest implements ITestHandler {
         @Override
         public void test(Consumer<Class<?>> validator, Supplier<BusBuilder> builder) {
             IEventBus bus = busCheck(builder);
-            assertThrows(IllegalArgumentException.class, () -> bus.addListener((OtherEvent e) -> {}));
+            assertThrows(IllegalArgumentException.class, () -> bus.addListener((OtherEvent e) -> {}, null));
             assertThrows(IllegalArgumentException.class, () -> bus.post(new OtherEvent()));
         }
     }
@@ -57,7 +57,7 @@ public abstract class EventBusSubtypeFilterTest implements ITestHandler {
         @Override
         public void test(Consumer<Class<?>> validator, Supplier<BusBuilder> builder) {
             IEventBus bus = bus(builder);
-            assertThrows(IllegalArgumentException.class, () -> bus.addListener((OtherEvent e) -> {}));
+            assertThrows(IllegalArgumentException.class, () -> bus.addListener((OtherEvent e) -> {}, null));
             assertDoesNotThrow(() -> bus.post(new OtherEvent()));
         }
     }

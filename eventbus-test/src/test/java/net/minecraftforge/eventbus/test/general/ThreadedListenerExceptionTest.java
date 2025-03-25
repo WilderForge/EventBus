@@ -81,7 +81,7 @@ public class ThreadedListenerExceptionTest implements ITestHandler {
         validator.accept(TestEvent.class);
         var bus = bus(builder.get());
 
-        final List<Callable<Object>> callables = Collections.nCopies(50, Executors.callable(() -> bus.addListener(ThreadedListenerExceptionTest::testEvent1)));
+        final List<Callable<Object>> callables = Collections.nCopies(50, Executors.callable(() -> bus.addListener(ThreadedListenerExceptionTest::testEvent1, null)));
         try {
             executorService.invokeAll(callables).stream().forEach(f->{
                 try {

@@ -30,10 +30,10 @@ public class AbstractEventListenerTest implements ITestHandler {
         AtomicBoolean concreteSuperEventHandled = new AtomicBoolean(false);
         AtomicBoolean abstractSubEventHandled = new AtomicBoolean(false);
         AtomicBoolean concreteSubEventHandled = new AtomicBoolean(false);
-        bus.addListener(EventPriority.NORMAL, false, AbstractSuperEvent.class, (event) -> abstractSuperEventHandled.set(true));
-        bus.addListener(EventPriority.NORMAL, false, ConcreteSuperEvent.class, (event) -> concreteSuperEventHandled.set(true));
-        bus.addListener(EventPriority.NORMAL, false, AbstractSubEvent.class, (event) -> abstractSubEventHandled.set(true));
-        bus.addListener(EventPriority.NORMAL, false, ConcreteSubEvent.class, (event) -> concreteSubEventHandled.set(true));
+        bus.addListener(EventPriority.NORMAL, false, AbstractSuperEvent.class, (event) -> abstractSuperEventHandled.set(true), null);
+        bus.addListener(EventPriority.NORMAL, false, ConcreteSuperEvent.class, (event) -> concreteSuperEventHandled.set(true), null);
+        bus.addListener(EventPriority.NORMAL, false, AbstractSubEvent.class, (event) -> abstractSubEventHandled.set(true), null);
+        bus.addListener(EventPriority.NORMAL, false, ConcreteSubEvent.class, (event) -> concreteSubEventHandled.set(true), null);
 
         bus.post(new ConcreteSubEvent());
 

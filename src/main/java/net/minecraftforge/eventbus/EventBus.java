@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,6 +28,7 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
     private static final boolean checkTypesOnDispatchProperty = Boolean.parseBoolean(System.getProperty("eventbus.checkTypesOnDispatch", "false"));
     private static final AtomicInteger maxID = new AtomicInteger(0);
     private final boolean trackPhases;
+    private final Comparator<IEventListener> comparator;
 
     private final ConcurrentHashMap<Object, List<IEventListener>> listeners = new ConcurrentHashMap<>();
     private final int busID = maxID.getAndIncrement();
@@ -37,6 +39,15 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
     private final boolean checkTypesOnDispatch;
     private final IEventListenerFactory factory;
 
+    public static final class EventPriorityComparator implements Comparator<IEventListener> {
+
+		@Override
+		public int compare(IEventListener o1, IEventListener o2) {
+			return ((Integer)o1.subscribeInfo().priority()).compareTo(o2.subscribeInfo().priority());
+		}
+    	
+    }
+    
     @SuppressWarnings("unused")
     private EventBus() {
         ListenerList.resize(busID + 1);
@@ -45,9 +56,10 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
         this.baseType = Event.class;
         this.checkTypesOnDispatch = checkTypesOnDispatchProperty;
         this.factory = new ClassLoaderFactory();
+        this.comparator = new EventPriorityComparator();
     }
 
-    private EventBus(final IEventExceptionHandler handler, boolean trackPhase, boolean startShutdown, Class<?> baseType, boolean checkTypesOnDispatch, IEventListenerFactory factory) {
+    private EventBus(final IEventExceptionHandler handler, boolean trackPhase, boolean startShutdown, Class<?> baseType, boolean checkTypesOnDispatch, IEventListenerFactory factory, Comparator<IEventListener> comparator) {
         ListenerList.resize(busID + 1);
         if (handler == null) exceptionHandler = this;
         else exceptionHandler = handler;
@@ -56,12 +68,14 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
         this.baseType = baseType;
         this.checkTypesOnDispatch = checkTypesOnDispatch || checkTypesOnDispatchProperty;
         this.factory = factory;
+        this.comparator = comparator;
     }
 
     public EventBus(final BusBuilderImpl busBuilder) {
         this(busBuilder.exceptionHandler, busBuilder.trackPhases, busBuilder.startShutdown,
              busBuilder.markerType, busBuilder.checkTypesOnDispatch,
-             busBuilder.modLauncher ? new ModLauncherFactory() : new ClassLoaderFactory());
+             busBuilder.modLauncher ? new ModLauncherFactory() : new ClassLoaderFactory(),
+             busBuilder.comparator);
     }
 
     private void registerClass(final Class<?> clazz) {
@@ -182,45 +196,45 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
     }
 
     @Override
-    public <T extends Event> void addListener(final Consumer<T> consumer) {
-        addListener(EventPriority.NORMAL, consumer);
+    public <T extends Event> void addListener(final Consumer<T> consumer, Method method) {
+        addListener(EventPriority.NORMAL, consumer, method);
     }
 
     @Override
-    public <T extends Event> void addListener(final Integer priority, final Consumer<T> consumer) {
-        addListener(priority, false, consumer);
+    public <T extends Event> void addListener(final Integer priority, final Consumer<T> consumer, Method method) {
+        addListener(priority, false, consumer, method);
     }
 
     @Override
-    public <T extends Event> void addListener(final Integer priority, final boolean receiveCancelled, final Consumer<T> consumer) {
+    public <T extends Event> void addListener(final Integer priority, final boolean receiveCancelled, final Consumer<T> consumer, Method method) {
         checkNotGeneric(consumer);
-        addListener(priority, passCancelled(receiveCancelled), consumer);
+        addListener(priority, passCancelled(receiveCancelled), consumer, method);
     }
 
     @Override
-    public <T extends Event> void addListener(final Integer priority, final boolean receiveCancelled, final Class<T> eventType, final Consumer<T> consumer) {
+    public <T extends Event> void addListener(final Integer priority, final boolean receiveCancelled, final Class<T> eventType, final Consumer<T> consumer, Method method) {
         checkNotGeneric(eventType);
-        addListener(priority, passCancelled(receiveCancelled), eventType, consumer);
+        addListener(priority, passCancelled(receiveCancelled), eventType, consumer, method);
     }
 
     @Override
-    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Consumer<T> consumer) {
-        addGenericListener(genericClassFilter, EventPriority.NORMAL, consumer);
+    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Consumer<T> consumer, Method method) {
+        addGenericListener(genericClassFilter, EventPriority.NORMAL, consumer, method);
     }
 
     @Override
-    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Integer priority, final Consumer<T> consumer) {
-        addGenericListener(genericClassFilter, priority, false, consumer);
+    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Integer priority, final Consumer<T> consumer, Method method) {
+        addGenericListener(genericClassFilter, priority, false, consumer, method);
     }
 
     @Override
-    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Integer priority, final boolean receiveCancelled, final Consumer<T> consumer) {
-        addListener(priority, passGenericFilter(genericClassFilter, receiveCancelled), consumer);
+    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Integer priority, final boolean receiveCancelled, final Consumer<T> consumer, Method method) {
+        addListener(priority, passGenericFilter(genericClassFilter, receiveCancelled), consumer, method);
     }
 
     @Override
-    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Integer priority, final boolean receiveCancelled, final Class<T> eventType, final Consumer<T> consumer) {
-        addListener(priority, passGenericFilter(genericClassFilter, receiveCancelled), eventType, consumer);
+    public <T extends GenericEvent<? extends F>, F> void addGenericListener(final Class<F> genericClassFilter, final Integer priority, final boolean receiveCancelled, final Class<T> eventType, final Consumer<T> consumer, Method method) {
+        addListener(priority, passGenericFilter(genericClassFilter, receiveCancelled), eventType, consumer, method);
     }
 
     @SuppressWarnings("unchecked")
@@ -233,21 +247,48 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
         return eventClass;
     }
 
-    private <T extends Event> void addListener(final Integer priority, final Predicate<? super T> filter, final Consumer<T> consumer) {
+    private <T extends Event> void addListener(final Integer priority, final Predicate<? super T> filter, final Consumer<T> consumer, Method method) {
         Class<T> eventClass = getEventClass(consumer);
         if (Objects.equals(eventClass, Event.class))
             LOGGER.warn(EVENTBUS,"Attempting to add a Lambda listener with computed generic type of Event. " +
                     "Are you sure this is what you meant? NOTE : there are complex lambda forms where " +
                     "the generic type information is erased and cannot be recovered at runtime.");
-        addListener(priority, filter, eventClass, consumer);
+        addListener(priority, filter, eventClass, consumer, method);
     }
 
-    private <T extends Event> void addListener(final Integer priority, final Predicate<? super T> filter, final Class<T> eventClass, final Consumer<T> consumer) {
+    private <T extends Event> void addListener(final Integer priority, final Predicate<? super T> filter, final Class<T> eventClass, final Consumer<T> consumer, Method method) {
         if (baseType != Event.class && !baseType.isAssignableFrom(eventClass)) {
             throw new IllegalArgumentException(
                     "Listener for event " + eventClass + " takes an argument that is not a subtype of the base type " + baseType);
         }
-        addToListeners(consumer, eventClass, NamedEventListener.namedWrapper(e-> doCastFilter(filter, eventClass, consumer, e), consumer.getClass()::getName), priority);
+        addToListeners(consumer, eventClass, NamedEventListener.namedWrapper(new IEventListener() {
+        	
+			@Override
+			public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+				return method.getAnnotation(annotationClass);
+			}
+
+			@Override
+			public Annotation[] getAnnotations() {
+				return method.getAnnotations();
+			}
+
+			@Override
+			public Annotation[] getDeclaredAnnotations() {
+				return method.getDeclaredAnnotations();
+			}
+			
+			@Override
+			public void invoke(Event event) {
+				doCastFilter(filter, eventClass, consumer, event);
+			}
+
+			@Override
+			public SubscribeEvent subscribeInfo() {
+				return method.getDeclaredAnnotation(SubscribeEvent.class);
+			}
+        	
+        }, consumer.getClass()::getName), priority, method);
     }
 
     @SuppressWarnings("unchecked")
@@ -261,17 +302,24 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
         try {
             final ASMEventHandler asm = new ASMEventHandler(this.factory, target, method, IGenericEvent.class.isAssignableFrom(eventType));
 
-            addToListeners(target, eventType, asm, asm.getPriority());
+            addToListeners(target, eventType, asm, asm.getPriority(), method);
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException | ClassNotFoundException e) {
             LOGGER.error(EVENTBUS,"Error registering event handler: {} {}", eventType, method, e);
         }
     }
 
-    private void addToListeners(final Object target, final Class<?> eventType, final IEventListener listener, final Integer priority) {
+    private void addToListeners(final Object target, final Class<?> eventType, final IEventListener listener, final Integer priority, Method method) {
         ListenerList listenerList = EventListenerHelper.getListenerList(eventType);
         listenerList.register(busID, priority, listener);
         List<IEventListener> others = listeners.computeIfAbsent(target, k -> Collections.synchronizedList(new ArrayList<>()));
-        others.add(listener);
+        
+        synchronized(others) {
+        	int index = Collections.binarySearch(others, listener, comparator);
+        	if (index < 0) {
+        		index = -index - 1; // Convert insertion point
+        	}
+        	others.add(index, listener);
+        }
     }
 
     @Override

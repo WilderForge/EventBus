@@ -37,12 +37,12 @@ public abstract class LambdaHandlerTest implements ITestHandler {
         public void test(Consumer<Class<?>> validator, Supplier<BusBuilder> builder) {
             final IEventBus iEventBus = builder.get().build();
             // Inline
-            iEventBus.addListener((Event e)-> hit = true);
+            iEventBus.addListener((Event e)-> hit = true, null);
             iEventBus.post(new Event());
             assertTrue(hit, "Inline Lambda was not called");
             hit = false;
             // Method reference
-            iEventBus.addListener(this::consumeEvent);
+            iEventBus.addListener(this::consumeEvent, null);
             iEventBus.post(new Event());
             assertTrue(hit, "Method reference was not called");
             hit = false;
@@ -54,14 +54,14 @@ public abstract class LambdaHandlerTest implements ITestHandler {
         public void test(Consumer<Class<?>> validator, Supplier<BusBuilder> builder) {
             final IEventBus iEventBus = builder.get().build();
             // Inline
-            iEventBus.addListener((SubEvent e) -> hit = true);
+            iEventBus.addListener((SubEvent e) -> hit = true, null);
             iEventBus.post(new SubEvent());
             assertTrue(hit, "Inline was not called");
             hit = false;
             iEventBus.post(new Event());
             assertTrue(!hit, "Inline was called on root event");
             // Method Reference
-            iEventBus.addListener(this::consumeSubEvent);
+            iEventBus.addListener(this::consumeSubEvent, null);
             iEventBus.post(new SubEvent());
             assertTrue(hit, "Method reference was not called");
             hit = false;
@@ -94,7 +94,7 @@ public abstract class LambdaHandlerTest implements ITestHandler {
             if (func.apply(event)) {
                 event.setCanceled(true);
             }
-        });
+        }, null);
     }
 
     public static class SubEvent extends Event {}

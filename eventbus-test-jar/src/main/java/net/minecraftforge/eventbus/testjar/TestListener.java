@@ -6,13 +6,18 @@
 
 package net.minecraftforge.eventbus.testjar;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class TestListener implements IEventListener {
     private Object instance;
+    private Method method;
 
-    TestListener(Object instance) {
+    TestListener(Object instance, Method method) {
         this.instance = instance;
     }
 
@@ -20,4 +25,24 @@ public class TestListener implements IEventListener {
     public void invoke(final Event event) {
         instance.equals(event);
     }
+
+	@Override
+	public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+		return method.getAnnotation(annotationClass);
+	}
+
+	@Override
+	public Annotation[] getAnnotations() {
+		return method.getAnnotations();
+	}
+
+	@Override
+	public Annotation[] getDeclaredAnnotations() {
+		return method.getDeclaredAnnotations();
+	}
+
+	@Override
+	public SubscribeEvent subscribeInfo() {
+		return method.getDeclaredAnnotation(SubscribeEvent.class);
+	}
 }
