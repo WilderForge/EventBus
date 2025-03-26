@@ -345,7 +345,7 @@ public class EventBus implements IEventExceptionHandler, IEventBus {
     @Override
     public boolean post(Event event, IEventBusInvokeDispatcher wrapper) {
         return post(event, wrapper, (e, listeners) -> {
-            return List.copyOf(EventBus.this.listeners.computeIfAbsent(event, l -> Collections.emptyList()));
+            return List.copyOf(listeners);
         });
     }
     
