@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -19,6 +20,8 @@ public class ListenerList {
     private static final List<ListenerList> allLists = new ArrayList<>();
     private static int maxSize = 0;
 
+    static HashSet<Integer> usedPriorities = new HashSet<Integer>();
+    
     @Nullable
     private final ListenerList parent;
     private ListenerListInst[] lists = new ListenerListInst[0];
@@ -212,7 +215,8 @@ public class ListenerList {
                 parent.buildCache();
 
             ArrayList<IEventListener> ret = new ArrayList<>();
-            for (Integer priority : priorities.keySet()) {
+            
+            for (Integer priority : usedPriorities) {
                 List<IEventListener> listeners = getListeners(priority);
                 if (listeners.isEmpty()) continue;
                 ret.addAll(listeners);
@@ -247,6 +251,7 @@ public class ListenerList {
             if (listenersForPriority == null) {
                 listenersForPriority = new ArrayList<>();
                 priorities.put(priority, listenersForPriority);
+                usedPriorities.add(priority);
             }
 
             return listenersForPriority;
