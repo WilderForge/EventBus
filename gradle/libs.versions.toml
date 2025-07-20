@@ -11,7 +11,7 @@ junit_version = "5.13.3"
 junit_platform_version = "1.13.3"
 asm_version = "9.8"
 jmh_version = "1.37"
-mixin_version = "0.15.5+mixin.0.8.7"
+mixin_version = "0.16.1+"
 spasm_version = "0.2.4+WilderForge"
 
 [libraries]
