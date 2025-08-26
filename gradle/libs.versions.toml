@@ -11,7 +11,7 @@ junit_version = "5.13.4"
 junit_platform_version = "1.13.4"
 asm_version = "9.8"
 jmh_version = "1.37"
-mixin_version = "0.16.3+"
+mixin_version = "0.16.3+mixin.0.8.7"
 spasm_version = "0.2.4+WilderForge"
 fabric_loom_version = "1.11.7"
 
