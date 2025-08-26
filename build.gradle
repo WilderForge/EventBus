@@ -1,9 +1,21 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			url = "https://maven.fabricmc.net"
+		}
+	}
+	dependencies {
+		classpath libs.fabric.loom
+	}
+}
+
 plugins {
-    id 'eclipse'
-    id 'java-library'
-    id 'maven-publish'
-    id 'com.github.ben-manes.versions' version '0.52.0'
-    id 'net.minecraftforge.licenser' version '1.2.0'
+	id 'eclipse'
+	id 'java-library'
+	id 'maven-publish'
+	id 'com.github.ben-manes.versions' version '0.52.0'
+	id 'net.minecraftforge.licenser' version '1.2.0'
 }
 
 group = 'net.minecraftforge'
@@ -13,62 +25,104 @@ apply from: 'replaceTokenScript.gradle'
 apply from: 'publishScript.gradle'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+	toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 repositories {
-    mavenLocal()
-    mavenCentral()
-    maven { url = 'https://maven.wildermods.com' }
-    maven { url = 'https://maven.fabricmc.net/' }
-    maven { url = 'https://maven.minecraftforge.net/' }
+	mavenLocal()
+	mavenCentral()
+	maven { url = 'https://maven.wildermods.com' }
+	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://maven.minecraftforge.net/' }
 }
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
+configurations {
+	nest {
+		canBeResolved = true
+		canBeConsumed = false
+		transitive = false
+	}
+}
+
+import net.fabricmc.loom.build.nesting.NestableJarGenerationTask;
+task generateNestableJars(type: NestableJarGenerationTask) {
+	from configurations.nest
+	outputDirectory = layout.buildDirectory.dir("nested-jars")
+}
+
+import net.fabricmc.loom.build.nesting.JarNester;
+task nestJars {
+	dependsOn jar
+	dependsOn generateNestableJars
+	
+	def outputDir = file("$buildDir/nested-jars")
+	
+	doLast {
+		File mainJar = jar.archiveFile.get().asFile
+		FileCollection nestedJars = fileTree("$buildDir/nested-jars").matching { include '*.jar' }
+
+		if (nestedJars.isEmpty()) {
+			logger.lifecycle("No jars to nest")
+		} else {
+			JarNester.nestJars(nestedJars.files, mainJar, logger)
+			logger.lifecycle("Nested ${nestedJars.files.size()} jars into ${mainJar.name}")
+		}
+	}
+}
+
+tasks.named('assemble') {
+    dependsOn nestJars
+}
+
 dependencies {
-    api(libs.typetools)
-    implementation(libs.log4j.api)
-    implementation(libs.bundles.asm)
-    implementation(libs.spasm)
-    compileOnly(libs.modlauncher)
-    compileOnly(libs.securemodules)
-    compileOnly(libs.nulls)
+	api(libs.typetools)
+	nest(libs.typetools)
+	
+	implementation(libs.spasm)
+	nest(libs.spasm)
+	
+	implementation(libs.log4j.api)
+	implementation(libs.bundles.asm)
+	compileOnly(libs.modlauncher)
+	compileOnly(libs.securemodules)
+	compileOnly(libs.nulls)
 }
 
 jar {
-    manifest {
-        attributes([
-            'Specification-Title':   'EventBus',
-            'Specification-Version':  project.version,
-            'Specification-Vendor':   'Forge Development LLC',
-            'Implementation-Title':   'EventBus',
-            'Implementation-Version': project.version,
-            'Implementation-Vendor':  'WilderForge'
-        ] as LinkedHashMap, 'net/minecraftforge/eventbus/service/')
-    }
+	manifest {
+		attributes([
+			'Specification-Title':   'EventBus',
+			'Specification-Version':  project.version,
+			'Specification-Vendor':   'Forge Development LLC',
+			'Implementation-Title':   'EventBus',
+			'Implementation-Version': project.version,
+			'Implementation-Vendor':  'WilderForge'
+		] as LinkedHashMap, 'net/minecraftforge/eventbus/service/')
+	}
 }
 
 license {
-    header = file("LICENSE-header.txt")
-    newLine = false
+	header = file("LICENSE-header.txt")
+	newLine = false
 }
 
 allprojects {
-    ext.VALID_VMS = [
-        'Adoptium':  [16, 17, 18, 19, 20, 21],
-        'Amazon':    [16, 17, 18, 19, 20, 21],
-        'Azul':      (16..21),
-        'BellSoft':  (16..21),
-        'Graal_VM':  [16, 17,     19, 20, 21],
-        'IBM':       [16, 17, 18, 19, 20    ],
-        'Microsoft': [16, 17,             21],
-        'Oracle':    (16..21),
-        'SAP':       (16..20)
-    ]
+	ext.VALID_VMS = [
+		'Adoptium':  [16, 17, 18, 19, 20, 21],
+		'Amazon':	[16, 17, 18, 19, 20, 21],
+		'Azul':	  (16..21),
+		'BellSoft':  (16..21),
+		'Graal_VM':  [16, 17,	 19, 20, 21],
+		'IBM':	   [16, 17, 18, 19, 20	],
+		'Microsoft': [16, 17,			 21],
+		'Oracle':	(16..21),
+		'SAP':	   (16..20)
+	]
 
-    // Tests are expensive to run all variants, so only run if asked to
-    if (!project.hasProperty('bulk_tests'))
-        ext.VALID_VMS = ['Adoptium':  [17]]//, 18, 19, 20, 21] ]
+	// Tests are expensive to run all variants, so only run if asked to
+	if (!project.hasProperty('bulk_tests'))
+		ext.VALID_VMS = ['Adoptium':  [17]]//, 18, 19, 20, 21] ]
 }

@@ -13,6 +13,7 @@ asm_version = "9.8"
 jmh_version = "1.37"
 mixin_version = "0.16.1+mixin.0.8.7"
 spasm_version = "0.2.4+WilderForge"
+fabric_loom_version = "1.11.7"
 
 [libraries]
 modlauncher = { module = "net.minecraftforge:modlauncher", version.ref = "modlauncher_version" }
@@ -32,6 +33,7 @@ jmh-core = { module = "org.openjdk.jmh:jmh-core", version.ref = "jmh_version" }
 jmh-annotationProcessor = { module = "org.openjdk.jmh:jmh-generator-annprocess", version.ref = "jmh_version" }
 mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin_version" }
 spasm = { module = "net.mine_diver:SpASM", version.ref = "spasm_version" }
+fabric-loom = { module = "net.fabricmc:fabric-loom", version.ref = "fabric_loom_version"}
 
 [bundles]
 junit-runtime = ["junit-engine", "junit-platform-launcher"]
