@@ -25,7 +25,7 @@ apply from: 'replaceTokenScript.gradle'
 apply from: 'publishScript.gradle'
 
 java {
-	toolchain.languageVersion = JavaLanguageVersion.of(17)
+	toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 repositories {
