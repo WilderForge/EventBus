@@ -98,9 +98,17 @@ dependencies {
 }
 
 jar {
-    from("$buildDir/nested-jars") {
+    from(provider {
+        if (gradle.taskGraph.hasTask(':publish')) {
+            fileTree("$buildDir/nested-jars") {
+                include '*.jar'
+            }
+        } else {
+            // Return empty file tree if publish is not running
+            files().asFileTree
+        }
+    }) {
         into 'META-INF/jars'
-        include '*.jar'
     }
     
 	manifest {
