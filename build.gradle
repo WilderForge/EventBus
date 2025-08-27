@@ -77,6 +77,12 @@ tasks.named('assemble') {
     dependsOn nestJars
 }
 
+
+tasks.named('publish') {
+	dependsOn assemble
+	jar.dependsOn generateNestableJars
+}
+
 dependencies {
 	api(libs.typetools)
 	nest(libs.typetools)
@@ -92,6 +98,11 @@ dependencies {
 }
 
 jar {
+    from("$buildDir/nested-jars") {
+        into 'META-INF/jars'
+        include '*.jar'
+    }
+    
 	manifest {
 		attributes([
 			'Specification-Title':   'EventBus',
