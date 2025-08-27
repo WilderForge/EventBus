@@ -27,7 +27,8 @@
 	],
 	"depends":{
 		"spasm": ">=0.2.0",
-		"java": ">=17"
+		"java": ">=17",
+		"net_jodah_typetools": ">=0.6.3"
 	},
 	"breaks":{
 		"spasm": "0.2.3+WilderForge"
