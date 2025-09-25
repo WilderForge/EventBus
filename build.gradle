@@ -14,7 +14,7 @@ plugins {
 	id 'eclipse'
 	id 'java-library'
 	id 'maven-publish'
-	id 'com.github.ben-manes.versions' version '0.52.0'
+	id 'com.github.ben-manes.versions' version '0.53.0'
 	id 'net.minecraftforge.licenser' version '1.2.0'
 }
 
