@@ -22,13 +22,13 @@ public sealed interface EventListenerImpl extends EventListener {
 
     record ConsumerListener(
             Class<? extends Event> eventType,
-            byte priority,
+            int priority,
             Consumer<Event> consumer
     ) implements HasConsumer<Event> {}
 
     record PredicateListener(
             Class<? extends Event> eventType,
-            byte priority,
+            int priority,
             Predicate<Event> predicate
     ) implements HasPredicate<Event> {
         public PredicateListener {
@@ -45,23 +45,23 @@ public sealed interface EventListenerImpl extends EventListener {
         }
 
         @Override
-        public byte priority() {
+        public int priority() {
             return Priority.MONITOR;
         }
     }
 
     record WrappedConsumerListener(
             Class<? extends Event> eventType,
-            byte priority,
+            int priority,
             boolean alwaysCancelling,
             Consumer<Event> consumer,
             Predicate<Event> predicate
     ) implements HasConsumer<Event>, HasPredicate<Event> {
-        public WrappedConsumerListener(Class<? extends Event> eventType, byte priority, Consumer<Event> consumer) {
+        public WrappedConsumerListener(Class<? extends Event> eventType, int priority, Consumer<Event> consumer) {
             this(eventType, priority, false, consumer, wrap(false, consumer));
         }
 
-        public WrappedConsumerListener(Class<? extends Event> eventType, byte priority, boolean alwaysCancelling, Consumer<Event> consumer) {
+        public WrappedConsumerListener(Class<? extends Event> eventType, int priority, boolean alwaysCancelling, Consumer<Event> consumer) {
             this(eventType, priority, alwaysCancelling, consumer, wrap(alwaysCancelling, consumer));
         }
 

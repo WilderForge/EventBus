@@ -114,7 +114,7 @@ public class IndividualEventListenerTests {
             static final CancellableEventBus<CancellableTestEvent> BUS = CancellableEventBus.create(CancellableTestEvent.class);
         }
 
-        var cancellingListener = CancellableTestEvent.BUS.addListener(Priority.HIGHEST, true, event -> {});
+        var cancellingListener = CancellableTestEvent.BUS.addListener(Priority.HIGHER, true, event -> {});
         var ordinaryListener = CancellableTestEvent.BUS.addListener(event -> {});
 
         var listeners = List.of(cancellingListener, ordinaryListener);

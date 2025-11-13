@@ -157,7 +157,7 @@ public class SubscribeEventValidatorTests {
     @Test
     public void testSubscribeEventPriorityMonitoring() {
         var compilation = compile("""
-            @SubscribeEvent(priority = Priority.LOWEST)
+            @SubscribeEvent(priority = Priority.LOWER)
             void cancellationAwareMonitoringListener(CancelableEvent event, boolean wasCancelled) {}
         """);
         assertThat(compilation).hadErrorContaining("must have a priority of MONITOR");

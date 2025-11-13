@@ -14,31 +14,31 @@ public final class Priority {
     /**
      * Runs first
      */
-    public static final byte HIGHEST = Byte.MAX_VALUE;
+    public static final int HIGHER = 10000;
 
     /**
-     * Runs before {@link #NORMAL} but after {@link #HIGHEST}
+     * Runs before {@link #NORMAL} but after {@link #HIGHER}
      */
-    public static final byte HIGH = 64;
+    public static final int HIGH = 5000;
 
     /**
      * The default priority
      */
-    public static final byte NORMAL = 0;
+    public static final int NORMAL = 0;
 
     /**
-     * Runs after {@link #NORMAL} but before {@link #LOWEST}
+     * Runs after {@link #NORMAL} but before {@link #LOWER}
      */
-    public static final byte LOW = -64;
+    public static final int LOW = -5000;
 
     /**
      * The last priority that can mutate the event instance
      */
-    public static final byte LOWEST = Byte.MIN_VALUE + 1;
+    public static final int LOWER = -10000;
 
     /**
      * A special priority that is only used for monitoring purposes and typically doesn't allow cancelling or mutation.
      * <p>Monitoring listeners are always called last - even if the event is cancelled.</p>
      */
-    public static final byte MONITOR = Byte.MIN_VALUE;
+    public static final int MONITOR = Integer.MIN_VALUE;
 }

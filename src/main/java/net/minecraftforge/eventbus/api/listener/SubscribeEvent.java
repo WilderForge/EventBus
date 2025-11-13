@@ -18,7 +18,7 @@ public @interface SubscribeEvent {
      * The priority of this listener. Listeners with higher priority numbers are called first.
      * @see Priority
      */
-    byte priority() default Priority.NORMAL;
+    int priority() default Priority.NORMAL;
 
     /**
      * If the event is cancellable, setting this to true will make the listener always cancel the event.

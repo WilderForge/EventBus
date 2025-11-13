@@ -42,7 +42,7 @@ public sealed interface CancellableEventBus<T extends Event & Cancellable>
      * @return A reference that can be used to remove this listener later with {@link #removeListener(EventListener)}.
      * @see Priority For common priority values
      */
-    EventListener addListener(byte priority, boolean alwaysCancelling, Consumer<T> listener);
+    EventListener addListener(int priority, boolean alwaysCancelling, Consumer<T> listener);
 
     /**
      * Adds a possibly cancelling listener to this EventBus with the default priority of {@link Priority#NORMAL}.
@@ -58,7 +58,7 @@ public sealed interface CancellableEventBus<T extends Event & Cancellable>
      * @return A reference that can be used to remove this listener later with {@link #removeListener(EventListener)}.
      * @see Priority For common priority values
      */
-    EventListener addListener(byte priority, Predicate<T> listener);
+    EventListener addListener(int priority, Predicate<T> listener);
 
     /**
      * Adds a cancellation-aware monitoring listener to this EventBus.

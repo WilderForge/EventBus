@@ -28,7 +28,7 @@ public sealed interface EventListener permits EventListenerImpl {
      * The priority of this listener. Higher numbers are called first.
      * @see Priority
      */
-    byte priority();
+    int priority();
 
     /**
      * Whether this listener is known to always cancel the {@link Cancellable} event when called.

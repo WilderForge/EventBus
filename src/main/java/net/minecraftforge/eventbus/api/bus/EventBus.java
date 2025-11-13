@@ -33,7 +33,7 @@ public sealed interface EventBus<T extends Event> permits CancellableEventBus, A
      * @return A reference that can be used to remove this listener later with {@link #removeListener(EventListener)}
      * @see Priority For common priority values
      */
-    EventListener addListener(byte priority, Consumer<T> listener);
+    EventListener addListener(int priority, Consumer<T> listener);
 
     /**
      * Re-adds a listener to this EventBus that was previously removed with {@link #removeListener(EventListener)}.

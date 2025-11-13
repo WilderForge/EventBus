@@ -54,7 +54,7 @@ public record CancellableEventBusImpl<T extends Event & Cancellable>(
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"}) // T extends Event, so this is safe.
-    public EventListener addListener(byte priority, Consumer<T> listener) {
+    public EventListener addListener(int priority, Consumer<T> listener) {
         return addListener(
                 priority == Priority.MONITOR
                         ? new EventListenerImpl.MonitoringListener(eventType, (Consumer<Event>) (Consumer) listener)
@@ -64,7 +64,7 @@ public record CancellableEventBusImpl<T extends Event & Cancellable>(
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"}) // T extends Event, so this is safe
-    public EventListener addListener(byte priority, boolean alwaysCancelling, Consumer<T> listener) {
+    public EventListener addListener(int priority, boolean alwaysCancelling, Consumer<T> listener) {
         if (!alwaysCancelling) {
             throw new IllegalArgumentException("If you never cancel the event, call addListener(byte, Consumer<T>)" +
                     "instead to avoid the possibility of an unnecessary breaking change if the event is no longer" +
@@ -86,7 +86,7 @@ public record CancellableEventBusImpl<T extends Event & Cancellable>(
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"}) // T extends Event, so this is safe
-    public EventListener addListener(byte priority, Predicate<T> listener) {
+    public EventListener addListener(int priority, Predicate<T> listener) {
         if (priority == Priority.MONITOR)
             throw new IllegalArgumentException("Monitoring listeners cannot cancel events");
 

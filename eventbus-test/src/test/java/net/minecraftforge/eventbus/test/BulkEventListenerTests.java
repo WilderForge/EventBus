@@ -278,7 +278,7 @@ public class BulkEventListenerTests {
             return false;
         }
 
-        @SubscribeEvent(alwaysCancelling = true, priority = -100)
+        @SubscribeEvent(alwaysCancelling = true, priority = -9999)
         public static void alwaysCancellingListener(CancellableTestEvent event) {
             alwaysCancellingCalled = true;
         }
@@ -303,7 +303,7 @@ public class BulkEventListenerTests {
             highPriorityCalled = true;
         }
 
-        @SubscribeEvent(priority = Priority.LOWEST)
+        @SubscribeEvent(priority = Priority.LOWER)
         public static void neverCalledListener(CancellableTestEvent event) {
             Assertions.fail("This listener should never be called because the alwaysCancellingListener should've cancelled the event before me");
         }
@@ -658,10 +658,10 @@ public class BulkEventListenerTests {
     @Test
     public void testStrictBulkRegistrationValidationWrongPriorityMonitoring() {
         final class WrongPriorityMonitoring {
-            @SubscribeEvent(priority = Priority.HIGHEST)
+            @SubscribeEvent(priority = Priority.HIGHER)
             void wrongPriority(CancellableTestEvent event, boolean wasCancelled) {}
 
-            @SubscribeEvent(priority = Priority.LOWEST)
+            @SubscribeEvent(priority = Priority.LOWER)
             static void wrongPriorityStatic(CancellableTestEvent event, boolean wasCancelled) {}
         }
 
